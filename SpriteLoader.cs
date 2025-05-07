@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Configuration;
 using HarmonyLib;
 using MelonLoader;
 using Unity.VisualScripting;
@@ -26,8 +27,7 @@ namespace SpriteLoader
                 if (obj.name == "Pusseen")
                 {
                     SpriteOverride spriteOverride = obj.AddComponent<SpriteOverride>();
-                    Image image = obj.GetComponent<Image>();
-                    spriteOverride.image = image;
+                    spriteOverride.image = obj.GetComponent<Image>();
                     break;
                 }
             }
@@ -42,9 +42,8 @@ namespace SpriteLoader
             SpriteOverride spriteOverride = __instance.GetComponent<SpriteOverride>();
             if (spriteOverride == null)
             {
-                Image image = __instance.monsterImage;
                 spriteOverride = __instance.AddComponent<SpriteOverride>();
-                spriteOverride.image = image;
+                spriteOverride.image = __instance.monsterImage;
             }
 
             spriteOverride.frames = null;
@@ -71,10 +70,10 @@ namespace SpriteLoader
         static void Postfix(MonsterUIInstance __instance)
         {
             SpriteOverride spriteOverride = __instance.AddComponent<SpriteOverride>();
-            SpriteRenderer spriteRenderer = __instance.spriteRenderer;
-            spriteOverride.spriteRenderer = spriteRenderer;
+            spriteOverride.spriteRenderer = __instance.spriteRenderer;
         }
     }
+
     public class SpriteOverride : MonoBehaviour
     {
         public Image image;
@@ -88,7 +87,7 @@ namespace SpriteLoader
             {
                 Sprite sprite = (image == null) ? spriteRenderer.sprite : image.sprite;
 
-                string texName = Util.ExtractFrameName(image.sprite.name);
+                string texName = Util.ExtractFrameName(sprite.name);
                 if (prevName == texName) return;
                 prevName = texName;
 
@@ -105,7 +104,6 @@ namespace SpriteLoader
             {
                 int frameNum = Util.ExtractFrameNumber(spriteRenderer.sprite.name);
                 spriteRenderer.sprite = frames[frameNum];
-                return;
             }
             if (spriteRenderer == null)
             {
